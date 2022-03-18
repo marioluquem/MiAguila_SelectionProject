@@ -1,4 +1,4 @@
-part of 'mycartlist_cubit.dart';
+part of 'my_cart_list_cubit.dart';
 
 //Estado del cubit del carrito de compras
 class MycartlistState {

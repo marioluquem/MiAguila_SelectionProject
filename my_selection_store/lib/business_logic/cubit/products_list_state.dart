@@ -1,9 +1,10 @@
-part of 'productslist_cubit.dart';
+part of 'products_list_cubit.dart';
 
 //Estado del cubit de la lista global de items del API
 class ProductslistState {
   final List<ProductState> listProducts;
   final List<ProductState> listFeaturedProducts;
+
   ProductslistState(
       {required this.listProducts, required this.listFeaturedProducts});
 
