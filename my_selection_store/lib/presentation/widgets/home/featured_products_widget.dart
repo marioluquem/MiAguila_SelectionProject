@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_selection_store/data/models/product_model.dart';
 import 'package:my_selection_store/helpers/constants.dart';
 import 'package:my_selection_store/helpers/routes.dart';
+import 'package:my_selection_store/presentation/widgets/general/circular_container_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class FeaturedProductsHome extends StatefulWidget {
@@ -13,8 +14,8 @@ class FeaturedProductsHome extends StatefulWidget {
 }
 
 class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
-  final CarouselController _carouselController = CarouselController();
-  int _indexCarouselFeatured = 0;
+  final CarouselController carouselController = CarouselController();
+  int indexCarouselFeatured = 0;
   List<ProductModel> listFeaturedProducts = [];
 
   @override
@@ -38,59 +39,76 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text(
-            'Destacados',
-            style: Constants.styleTitle(textColor: Colors.white),
-          ),
-          Stack(children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: CarouselSlider(
-                options: CarouselOptions(
-                    height: 70,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _indexCarouselFeatured = index;
-                      });
-                    }),
-                items: listFeatured,
-                carouselController: _carouselController,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _carouselController.previousPage();
-                    },
-                    icon: const Icon(Icons.arrow_back_ios,
-                        size: 30, color: Colors.white),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _carouselController.nextPage();
-                    },
-                    icon: const Icon(Icons.arrow_forward_ios,
-                        size: 30, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ]),
-          AnimatedSmoothIndicator(
-            activeIndex: _indexCarouselFeatured,
-            count: listFeatured.length,
-            onDotClicked: (index) {
-              _indexCarouselFeatured = index;
-              _carouselController.animateToPage(index);
-              print(index);
-            },
-          )
+          featuredTitle(),
+          carouselProducts(context, listFeatured),
+          dots(listFeatured)
         ],
       ),
+    );
+  }
+
+  AnimatedSmoothIndicator dots(List<Widget> listFeatured) {
+    return AnimatedSmoothIndicator(
+      effect: WormEffect(
+          activeDotColor: Constants.secondaryColorLight,
+          dotColor: Constants.secondaryColor.withOpacity(0.5)),
+      activeIndex: indexCarouselFeatured,
+      count: listFeatured.length,
+      onDotClicked: (index) {
+        indexCarouselFeatured = index;
+        carouselController.animateToPage(index);
+        print(index);
+      },
+    );
+  }
+
+  Stack carouselProducts(BuildContext context, List<Widget> listFeatured) {
+    return Stack(children: [
+      SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: CarouselSlider(
+          options: CarouselOptions(
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 4),
+              height: 70,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  indexCarouselFeatured = index;
+                });
+              }),
+          items: listFeatured,
+          carouselController: carouselController,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: () {
+                carouselController.previousPage();
+              },
+              icon: const Icon(Icons.arrow_back_ios,
+                  size: 30, color: Colors.white),
+            ),
+            IconButton(
+              onPressed: () {
+                carouselController.nextPage();
+              },
+              icon: const Icon(Icons.arrow_forward_ios,
+                  size: 30, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    ]);
+  }
+
+  Text featuredTitle() {
+    return Text(
+      'Destacados',
+      style: Constants.styleTitle(textColor: Colors.white),
     );
   }
 
@@ -108,7 +126,6 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
   }
 
   getFeaturedProductsList() {
-    List<Widget> listFeatured = [];
     listFeaturedProducts = [
       ProductModel.fromJson(getInfo()),
       ProductModel.fromJson(getInfo()),
@@ -117,60 +134,61 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
       ProductModel.fromJson(getInfo()),
     ];
 
-    for (var i = 0; i < listFeaturedProducts.length; i++) {
-      final product = listFeaturedProducts[i];
-      listFeatured.add(
-        GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, MyRoutes.detailPath,
-                arguments: [product, "${i}Featured"]);
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+    List<Widget> listFeatured =
+        List.generate(listFeaturedProducts.length, (index) {
+      final product = listFeaturedProducts[index];
+      return GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, MyRoutes.detailPath,
+              arguments: [product, "${index}Featured"]);
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularContainer(
+              size: 75,
+              child: Container(
+                color: Constants.secondaryColor,
                 child: Hero(
-                  tag: "image${product.id}-${i}FeaturedDetail",
+                  tag: "image${product.id}-${index}Featured",
                   child: FadeInImage(
-                    height: 80,
                     placeholder: AssetImage(Constants.noImagePath),
                     image: NetworkImage(product.image),
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 12,
+            ),
+            const SizedBox(
+              width: 12,
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    "\$${product.price.toString()}",
+                    style: TextStyle(
+                        color: Constants.secondaryColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    Text(
-                      "\$${product.price.toString()}",
-                      style: TextStyle(
-                          color: Constants.pricesColor,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       );
-    }
+    });
 
     return listFeatured;
   }
