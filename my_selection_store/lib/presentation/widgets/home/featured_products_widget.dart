@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:my_selection_store/data/models/product_model.dart';
 import 'package:my_selection_store/helpers/constants.dart';
+import 'package:my_selection_store/helpers/routes.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class FeaturedProductsHome extends StatefulWidget {
@@ -116,21 +117,26 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
       ProductModel.fromJson(getInfo()),
     ];
 
-    for (var product in listFeaturedProducts) {
+    for (var i = 0; i < listFeaturedProducts.length; i++) {
+      final product = listFeaturedProducts[i];
       listFeatured.add(
         GestureDetector(
           onTap: () {
-            //TODO enviar a detail page con parámetro del producto
+            Navigator.pushNamed(context, MyRoutes.detailPath,
+                arguments: [product, "${i}Featured"]);
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: FadeInImage(
-                  height: 80,
-                  placeholder: AssetImage(Constants.noImagePath),
-                  image: NetworkImage(product.image),
+                child: Hero(
+                  tag: "image${product.id}-${i}FeaturedDetail",
+                  child: FadeInImage(
+                    height: 80,
+                    placeholder: AssetImage(Constants.noImagePath),
+                    image: NetworkImage(product.image),
+                  ),
                 ),
               ),
               const SizedBox(

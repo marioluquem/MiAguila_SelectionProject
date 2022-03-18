@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_selection_store/data/models/product_model.dart';
 import 'package:my_selection_store/helpers/constants.dart';
+import 'package:my_selection_store/helpers/routes.dart';
 import 'package:my_selection_store/helpers/utils.dart';
 
 class ScrollProductsHome extends StatefulWidget {
@@ -98,17 +99,21 @@ class _ScrollProductsHomeState extends State<ScrollProductsHome> {
           children: [
             GestureDetector(
               onTap: () {
-                //TODO. enviar al detail page aqui solo al tocar la imagen
+                Navigator.pushNamed(context, MyRoutes.detailPath,
+                    arguments: [product, "${index}Scroll"]);
               },
               child: ClipOval(
                 child: Container(
                   color: Constants.mainColor,
                   child: AspectRatio(
                     aspectRatio: 1,
-                    child: FadeInImage(
-                      height: 60,
-                      placeholder: AssetImage(Constants.noImagePath),
-                      image: NetworkImage(product.image),
+                    child: Hero(
+                      tag: "image${product.id}-${index}ScrollDetail",
+                      child: FadeInImage(
+                        height: 60,
+                        placeholder: AssetImage(Constants.noImagePath),
+                        image: NetworkImage(product.image),
+                      ),
                     ),
                   ),
                 ),
@@ -120,11 +125,17 @@ class _ScrollProductsHomeState extends State<ScrollProductsHome> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  product.title,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, MyRoutes.detailPath,
+                        arguments: [product, "${index}Scroll"]);
+                  },
+                  child: Text(
+                    product.title,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(
                   height: 12,
