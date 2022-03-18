@@ -14,7 +14,7 @@ class DetailScreen extends StatelessWidget {
         child: Column(
           children: [
             Hero(
-                tag: "image${product.id}-${idHero}Detail",
+                tag: "image${product.id}-$idHero",
                 child: Image.network(
                   product.image,
                   height: MediaQuery.of(context).size.height * 0.4,

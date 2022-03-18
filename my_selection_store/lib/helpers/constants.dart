@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class Constants {
   //COLORS
-  static Color mainColor = Colors.orange;
+  static Color mainColor = Colors.cyan;
+  static Color secondaryColor = Colors.amber;
+  static Color secondaryColorLight = Colors.amber.shade300;
   static Color pricesColor = Colors.green;
 
   //IMAGES
