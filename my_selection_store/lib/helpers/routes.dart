@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:my_selection_store/data/models/product_model.dart';
 import 'package:my_selection_store/presentation/screens/detail_screen.dart';
 import 'package:my_selection_store/presentation/screens/home_screen.dart';
+import 'package:my_selection_store/presentation/screens/shopping_cart_screen.dart';
 
 class MyRoutes {
   static const String homePath = 'home_screen';
   static const String detailPath = 'detail_screen';
-  static const String myCartPath = 'my_cart_screen';
+  static const String shoppingCartPath = 'shopping_cart_screen';
 
   static getRoutes(RouteSettings settings) {
     Widget screen;
@@ -23,6 +24,9 @@ class MyRoutes {
           product: product,
           idHero: idHero,
         );
+        break;
+      case shoppingCartPath:
+        screen = const ShoppingCartScreen();
         break;
       default:
         screen = const HomeScreen();

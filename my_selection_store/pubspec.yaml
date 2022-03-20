@@ -30,6 +30,7 @@ dependencies:
   bloc: ^8.0.3
   carousel_slider: ^4.0.0
   cupertino_icons: ^1.0.2
+  dio: ^4.0.4
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
