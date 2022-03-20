@@ -10,6 +10,10 @@ class Constants {
   //IMAGES
   static String noImagePath = 'assets/imgs/no-image.jpg';
 
+  //HERO IDENTIFIERS
+  static String heroCartIdentifier = "Cart";
+  static String heroScrollIdentifier = "Scroll";
+
   //STYLES
   static TextStyle styleTitle({Color? textColor = Colors.black}) =>
       TextStyle(color: textColor, fontSize: 22);

@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
 import 'package:my_selection_store/data/models/product_model.dart';
 import 'package:my_selection_store/helpers/constants.dart';
 import 'package:my_selection_store/helpers/routes.dart';
-import 'package:my_selection_store/presentation/widgets/general/circular_container_widget.dart';
+import 'package:my_selection_store/presentation/widgets/generalWidgets/circular_container_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class FeaturedProductsHome extends StatefulWidget {
@@ -26,7 +28,6 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> listFeatured = getFeaturedProductsList();
     return Container(
       padding: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
@@ -34,75 +35,88 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
           borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(100),
               bottomRight: Radius.circular(100))),
-      height: MediaQuery.of(context).size.height * 0.2,
+      height: MediaQuery.of(context).size.height * 0.15,
       constraints: const BoxConstraints(minHeight: 150),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          featuredTitle(),
-          carouselProducts(context, listFeatured),
-          dots(listFeatured)
-        ],
+        children: [featuredTitle(), carouselProducts(context), dots()],
       ),
     );
   }
 
-  AnimatedSmoothIndicator dots(List<Widget> listFeatured) {
-    return AnimatedSmoothIndicator(
-      effect: WormEffect(
-          activeDotColor: Constants.secondaryColorLight,
-          dotColor: Constants.secondaryColor.withOpacity(0.5)),
-      activeIndex: indexCarouselFeatured,
-      count: listFeatured.length,
-      onDotClicked: (index) {
-        indexCarouselFeatured = index;
-        carouselController.animateToPage(index);
-        print(index);
+  Widget dots() {
+    return BlocConsumer<ProductsCubit, ProductsState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        return AnimatedSmoothIndicator(
+          effect: WormEffect(
+              activeDotColor: Constants.secondaryColorLight,
+              dotColor: Constants.secondaryColor.withOpacity(0.5)),
+          activeIndex: indexCarouselFeatured,
+          count: state.listFeaturedProducts.length,
+          onDotClicked: (index) {
+            indexCarouselFeatured = index;
+            carouselController.animateToPage(index);
+            print(index);
+          },
+        );
       },
     );
   }
 
-  Stack carouselProducts(BuildContext context, List<Widget> listFeatured) {
-    return Stack(children: [
-      SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: CarouselSlider(
-          options: CarouselOptions(
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 4),
-              height: 70,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  indexCarouselFeatured = index;
-                });
-              }),
-          items: listFeatured,
-          carouselController: carouselController,
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {
-                carouselController.previousPage();
-              },
-              icon: const Icon(Icons.arrow_back_ios,
-                  size: 30, color: Colors.white),
+  Widget carouselProducts(BuildContext context) {
+    return BlocConsumer<ProductsCubit, ProductsState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        return Stack(children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: state.listProductsHandlersStates
+                    .contains(ProductsHandlerState.loadingFeatured)
+                ? const Center(child: CircularProgressIndicator.adaptive())
+                : CarouselSlider(
+                    options: CarouselOptions(
+                        autoPlay: true,
+                        autoPlayInterval: const Duration(seconds: 4),
+                        height: 70,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            indexCarouselFeatured = index;
+                          });
+                        }),
+                    items: getFeaturedProductsList(state.listFeaturedProducts),
+                    carouselController: carouselController,
+                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    carouselController.previousPage();
+                  },
+                  icon: const Icon(Icons.arrow_back_ios,
+                      size: 30, color: Colors.white),
+                ),
+                IconButton(
+                  onPressed: () {
+                    carouselController.nextPage();
+                  },
+                  icon: const Icon(Icons.arrow_forward_ios,
+                      size: 30, color: Colors.white),
+                ),
+              ],
             ),
-            IconButton(
-              onPressed: () {
-                carouselController.nextPage();
-              },
-              icon: const Icon(Icons.arrow_forward_ios,
-                  size: 30, color: Colors.white),
-            ),
-          ],
-        ),
-      ),
-    ]);
+          ),
+        ]);
+      },
+    );
   }
 
   Text featuredTitle() {
@@ -112,31 +126,9 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
     );
   }
 
-  getInfo() {
-    return {
-      "id": 1,
-      "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-      "price": 109.95,
-      "description":
-          "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
-      "category": "men's clothing",
-      "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-      "rating": {"rate": 3.9, "count": 120}
-    };
-  }
-
-  getFeaturedProductsList() {
-    listFeaturedProducts = [
-      ProductModel.fromJson(getInfo()),
-      ProductModel.fromJson(getInfo()),
-      ProductModel.fromJson(getInfo()),
-      ProductModel.fromJson(getInfo()),
-      ProductModel.fromJson(getInfo()),
-    ];
-
-    List<Widget> listFeatured =
-        List.generate(listFeaturedProducts.length, (index) {
-      final product = listFeaturedProducts[index];
+  getFeaturedProductsList(List<ProductModel> listFeaturedProductsModels) {
+    return List.generate(listFeaturedProductsModels.length, (index) {
+      final product = listFeaturedProductsModels[index];
       return GestureDetector(
         onTap: () {
           Navigator.pushNamed(context, MyRoutes.detailPath,
@@ -189,7 +181,5 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
         ),
       );
     });
-
-    return listFeatured;
   }
 }
