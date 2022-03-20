@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
 import '../../../business_logic/cubit/products_cubit.dart';
 import '../../../data/models/product_model.dart';
 import '../../../helpers/constants.dart';
@@ -17,10 +18,10 @@ class FeaturedProductsHome extends StatefulWidget {
 }
 
 class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
+  late ProductsCubit productsCubit;
   final CarouselController carouselController = CarouselController();
   int indexCarouselFeatured = 0;
   List<ProductModel> listFeaturedProducts = [];
-  late ProductsCubit productsCubit;
 
   @override
   void initState() {
@@ -140,19 +141,24 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularContainer(
-              size: 75,
-              child: Container(
-                color: Constants.secondaryColor,
-                child: Hero(
-                  tag: "image${product.id}-${index}Featured",
-                  child: FadeInImage(
-                    placeholder: AssetImage(Constants.noImagePath),
-                    image: NetworkImage(product.image),
+            Builder(builder: (context) {
+              bool hasConnection =
+                  context.watch<InternetCubit>().isConnectedToInternet();
+              return CircularContainer(
+                size: 75,
+                child: Container(
+                  color: Constants.secondaryColor,
+                  child: Hero(
+                    tag: "image${product.id}-${index}Featured",
+                    child: hasConnection
+                        ? FadeInImage(
+                            placeholder: AssetImage(Constants.noImagePath),
+                            image: NetworkImage(product.image))
+                        : Image.asset(Constants.noImagePath),
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
             const SizedBox(
               width: 12,
             ),

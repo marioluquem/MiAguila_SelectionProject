@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
 import '../../../business_logic/cubit/products_cubit.dart';
 import '../../../data/models/product_model.dart';
 import '../../../helpers/constants.dart';
@@ -24,8 +25,8 @@ class QuickCartView extends StatefulWidget {
 
 class _QuickCartViewState extends State<QuickCartView>
     with TickerProviderStateMixin {
-  bool deletedAProduct = false; //bool para controlar IN or OUT animation
   ScrollController scrollController = ScrollController();
+  bool deletedAProduct = false; //bool para controlar IN or OUT animation
 
   @override
   void initState() {
@@ -116,15 +117,20 @@ class _QuickCartViewState extends State<QuickCartView>
     Animation<double> animation =
         CurvedAnimation(parent: controller, curve: Curves.ease);
 
-    Widget heroContent = CircularContainer(
-      size: 45,
-      aspectRatio: 1,
-      backgroundColor: Constants.mainColor,
-      child: FadeInImage(
-        placeholder: AssetImage(Constants.noImagePath),
-        image: NetworkImage(product.image),
-      ),
-    );
+    Widget heroContent = Builder(builder: (context) {
+      bool hasConnection =
+          context.watch<InternetCubit>().isConnectedToInternet();
+      return CircularContainer(
+        size: 45,
+        aspectRatio: 1,
+        backgroundColor: Constants.mainColor,
+        child: hasConnection
+            ? FadeInImage(
+                placeholder: AssetImage(Constants.noImagePath),
+                image: NetworkImage(product.image))
+            : Image.asset(Constants.noImagePath),
+      );
+    });
 
     Widget content = Stack(alignment: Alignment.topCenter, children: [
       Container(

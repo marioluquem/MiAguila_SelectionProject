@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
 import '../../business_logic/cubit/products_cubit.dart';
 import '../../helpers/constants.dart';
 import '../../helpers/routes.dart';
@@ -18,10 +19,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late ProductsCubit productsCubit;
+  late InternetCubit internetCubit;
 
   @override
   void initState() {
     productsCubit = BlocProvider.of<ProductsCubit>(context);
+    internetCubit = BlocProvider.of<InternetCubit>(context);
     //leemos los datos del API
     try {
       print("Leyendo los datos desde el home");
@@ -40,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool isPortrait = Utils.isOrientationPortrait(context);
+
     return SafeArea(
       child: Scaffold(
         body: SizedBox(
