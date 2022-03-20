@@ -4,3 +4,6 @@ enum EnumProductsLoadingState {
   loadingScroll,
   loadingCart,
 }
+
+//Enum para controlar los tipos de conexión del dispositivo
+enum InternetConnectionType { mobile, wifi, disconnected }

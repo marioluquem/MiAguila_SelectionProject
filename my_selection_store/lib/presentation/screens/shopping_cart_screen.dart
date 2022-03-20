@@ -68,7 +68,7 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
     return Container(
       padding: const EdgeInsets.only(bottom: 10, top: 10),
       decoration: BoxDecoration(
-          color: Constants.mainColor,
+          color: Constants.secondaryColor,
           borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(100),
               bottomRight: Radius.circular(100))),

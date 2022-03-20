@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
 import '../../../business_logic/cubit/products_cubit.dart';
 import '../../../data/models/product_model.dart';
 import '../../../helpers/constants.dart';
@@ -112,16 +113,21 @@ class _GridProductsState extends State<GridProducts>
   }
 
   Column productInfo(BuildContext context, ProductModel product, int index) {
-    Widget contentHero = CircularContainer(
-      size: 120,
-      child: Container(
-        color: Constants.mainColor,
-        child: FadeInImage(
-          placeholder: AssetImage(Constants.noImagePath),
-          image: NetworkImage(product.image),
+    Widget contentHero = Builder(builder: (context) {
+      bool hasConnection =
+          context.watch<InternetCubit>().isConnectedToInternet();
+      return CircularContainer(
+        size: 120,
+        child: Container(
+          color: Constants.mainColor,
+          child: hasConnection
+              ? FadeInImage(
+                  placeholder: AssetImage(Constants.noImagePath),
+                  image: NetworkImage(product.image))
+              : Image.asset(Constants.noImagePath),
         ),
-      ),
-    );
+      );
+    });
 
     return Column(
       children: [

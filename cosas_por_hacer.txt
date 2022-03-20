@@ -1,4 +1,8 @@
-- evaluar: ¿separar los cubit?
-- implementar base de datos local para funcionar offline
-- aplicar tests
-- implementar dynamic link para compartir los productos
+-   tarea: evaluar: ¿separa en 3 cubits?
+        (LISTO. Se decidió dejarlo con 1 solo Cubit)
+-   tarea: implementar base de datos local
+        (LISTO. Se utilizó Hydrated_Bloc para almacenar en storage el estado de los cubits)
+-   tarea: funcionar offline
+        (LISTO. Se utilizó el plugin Connectivity_Plus para detectar si esta conectado a Wifi, Mobile o desconectado. Ojo, este plugin no detecta si esta conectado a un Wifi sin internet, o si se esta usando una VPN)
+-   tarea: aplicar tests
+-   tarea: implementar dynamic link para compartir los productos
