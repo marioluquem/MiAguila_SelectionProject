@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/helpers/routes.dart';
-import 'package:my_selection_store/helpers/utils.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/add_to_cart_button.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/circular_container_widget.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/remove_button.dart';
+import '../../../business_logic/cubit/products_cubit.dart';
+import '../../../data/models/product_model.dart';
+import '../../../helpers/constants.dart';
+import '../../../helpers/routes.dart';
+import '../../../helpers/utils.dart';
+import 'add_to_cart_button.dart';
+import 'circular_container_widget.dart';
+import 'remove_button.dart';
 
 class GridProducts extends StatefulWidget {
   final bool isLoading;
@@ -17,6 +17,9 @@ class GridProducts extends StatefulWidget {
   String heroIdentifier;
   final bool animate;
 
+  //Para solo colocar el Hero a los 5 primeros ya que como los otros se ocultan en el "quickViewCart", al volver al home, se ve mal
+  final bool isInShoppingCart;
+
   GridProducts({
     Key? key,
     required this.isLoading,
@@ -25,6 +28,7 @@ class GridProducts extends StatefulWidget {
     required this.showDeleteFromCart,
     required this.heroIdentifier,
     this.animate = true,
+    this.isInShoppingCart = false,
   }) : super(key: key);
 
   @override
@@ -108,27 +112,30 @@ class _GridProductsState extends State<GridProducts>
   }
 
   Column productInfo(BuildContext context, ProductModel product, int index) {
+    Widget contentHero = CircularContainer(
+      size: 120,
+      child: Container(
+        color: Constants.mainColor,
+        child: FadeInImage(
+          placeholder: AssetImage(Constants.noImagePath),
+          image: NetworkImage(product.image),
+        ),
+      ),
+    );
+
     return Column(
       children: [
         GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, MyRoutes.detailPath,
-                arguments: [product, "$index-${widget.heroIdentifier}"]);
-          },
-          child: Hero(
-            tag: "image${product.id}-$index-${widget.heroIdentifier}",
-            child: CircularContainer(
-              size: 120,
-              child: Container(
-                color: Constants.mainColor,
-                child: FadeInImage(
-                  placeholder: AssetImage(Constants.noImagePath),
-                  image: NetworkImage(product.image),
-                ),
-              ),
-            ),
-          ),
-        ),
+            onTap: () {
+              productsCubit.setDetailProduct(product);
+              Navigator.pushNamed(context, MyRoutes.detailPath,
+                  arguments: ["$index-${widget.heroIdentifier}"]);
+            },
+            child: (!widget.isInShoppingCart || index <= 5)
+                ? Hero(
+                    tag: "image${product.id}-$index-${widget.heroIdentifier}",
+                    child: contentHero)
+                : contentHero),
         const SizedBox(
           width: 12,
         ),
@@ -137,8 +144,9 @@ class _GridProductsState extends State<GridProducts>
           children: [
             GestureDetector(
               onTap: () {
+                productsCubit.setDetailProduct(product);
                 Navigator.pushNamed(context, MyRoutes.detailPath,
-                    arguments: [product, "${index}Scroll"]);
+                    arguments: ["${index}Scroll"]);
               },
               child: Text(
                 product.title,

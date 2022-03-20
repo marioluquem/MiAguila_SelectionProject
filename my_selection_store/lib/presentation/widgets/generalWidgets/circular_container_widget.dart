@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_selection_store/helpers/constants.dart';
+import '../../../helpers/constants.dart';
 
 class CircularContainer extends StatelessWidget {
   final double size;

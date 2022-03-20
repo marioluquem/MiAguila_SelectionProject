@@ -1,0 +1,4 @@
+- evaluar: ¿separar los cubit?
+- implementar base de datos local para funcionar offline
+- aplicar tests
+- implementar dynamic link para compartir los productos

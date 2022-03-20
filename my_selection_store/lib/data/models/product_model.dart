@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final productModel = productModelFromJson(jsonString);
-
 import 'dart:convert';
 
 class ProductModel {
@@ -23,6 +19,40 @@ class ProductModel {
   String image;
   Rating rating;
 
+  factory ProductModel.empty() => ProductModel(
+      id: 0,
+      title: '',
+      price: 0,
+      description: '',
+      category: '',
+      image: '',
+      rating: Rating(rate: 0, count: 0));
+
+  factory ProductModel.fromRawJson(String str) =>
+      ProductModel.fromJson(json.decode(str));
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
+        id: json["id"],
+        title: json["title"],
+        price: json["price"].toDouble(),
+        description: json["description"],
+        category: json["category"],
+        image: json["image"],
+        rating: Rating.fromJson(json["rating"]),
+      );
+
+  String toRawJson() => json.encode(toJson());
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "title": title,
+        "price": price,
+        "description": description,
+        "category": category,
+        "image": image,
+        "rating": rating.toJson(),
+      };
+
   ProductModel copyWith({
     int? id,
     String? title,
@@ -41,31 +71,6 @@ class ProductModel {
         image: image ?? this.image,
         rating: rating ?? this.rating,
       );
-
-  factory ProductModel.fromRawJson(String str) =>
-      ProductModel.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-        id: json["id"],
-        title: json["title"],
-        price: json["price"].toDouble(),
-        description: json["description"],
-        category: json["category"],
-        image: json["image"],
-        rating: Rating.fromJson(json["rating"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "title": title,
-        "price": price,
-        "description": description,
-        "category": category,
-        "image": image,
-        "rating": rating.toJson(),
-      };
 }
 
 class Rating {

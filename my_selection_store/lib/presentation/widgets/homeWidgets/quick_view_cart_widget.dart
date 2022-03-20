@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/helpers/routes.dart';
-import 'package:my_selection_store/helpers/utils.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/circular_container_widget.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/remove_button.dart';
+import '../../../business_logic/cubit/products_cubit.dart';
+import '../../../data/models/product_model.dart';
+import '../../../helpers/constants.dart';
+import '../../../helpers/enums.dart';
+import '../../../helpers/routes.dart';
+import '../../../helpers/utils.dart';
+import '../generalWidgets/circular_container_widget.dart';
+import '../generalWidgets/remove_button.dart';
 
 class QuickCartView extends StatefulWidget {
   final bool heroActive;
-  const QuickCartView({Key? key, this.heroActive = true}) : super(key: key);
+  final bool
+      useMaxWidth; //Para usar el maxWidth del screen (en el Home se tiene un botón a la derecha por lo que no usa el maxWidth, en Detalle si)
+  const QuickCartView(
+      {Key? key, this.heroActive = true, this.useMaxWidth = true})
+      : super(key: key);
 
   @override
   State<QuickCartView> createState() => _QuickCartViewState();
@@ -19,6 +25,12 @@ class QuickCartView extends StatefulWidget {
 class _QuickCartViewState extends State<QuickCartView>
     with TickerProviderStateMixin {
   bool deletedAProduct = false; //bool para controlar IN or OUT animation
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +45,17 @@ class _QuickCartViewState extends State<QuickCartView>
       child: Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.76,
+            width: MediaQuery.of(context).size.width *
+                (widget.useMaxWidth ? 0.96 : 0.76),
             child: BlocConsumer<ProductsCubit, ProductsState>(
               listener: (context, state) {},
               builder: (context, state) {
+                //para actualizar el scroll de los productos del carrito a la ultima posición al agregar
+                Utils.scrollToMaxLength(scrollController);
+
                 //Si está cargando los productos, mostramos varios loading simulando los productos
                 if (state.listProductsHandlersStates
-                    .contains(ProductsHandlerState.loadingCart)) {
+                    .contains(EnumProductsLoadingState.loadingCart)) {
                   return Row(
                     children: List.generate(
                       5,
@@ -52,6 +68,7 @@ class _QuickCartViewState extends State<QuickCartView>
                   //Si tiene productos en carrito, los muestra, sino muestra un texto
                   if (state.listCartProducts.isNotEmpty) {
                     return ListView(
+                      controller: scrollController,
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
                       children: [
@@ -109,41 +126,34 @@ class _QuickCartViewState extends State<QuickCartView>
       ),
     );
 
-    Widget content = GestureDetector(
-      onTap: () {
-        // Navigator.pushNamed(context, MyRoutes.detailPath,
-        //     arguments: [product, "$index-${Constants.heroCartIdentifier}"]);
-      },
-      child: Stack(alignment: Alignment.topCenter, children: [
-        Container(
-            margin: const EdgeInsets.symmetric(horizontal: 5),
-            child: widget.heroActive
-                ? Hero(
-                    tag:
-                        "image${product.id}-$index-${Constants.heroCartIdentifier}",
-                    child: heroContent)
-                : heroContent),
-        Positioned(
-            top: -15,
-            right: -15,
-            child: RemoveButton(
-                size: 22,
-                onPressed: () async {
-                  deletedAProduct =
-                      true; //bool para evitar que haga animación de entrada del ultimo producto después de eliminar
-                  controller.reverse(); //hacemos animacion de dismiss
-                  await Future.delayed(const Duration(seconds: 1));
+    Widget content = Stack(alignment: Alignment.topCenter, children: [
+      Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          child: widget.heroActive
+              ? Hero(
+                  tag:
+                      "image${product.id}-$index-${Constants.heroCartIdentifier}",
+                  child: heroContent)
+              : heroContent),
+      Positioned(
+          top: -15,
+          right: -15,
+          child: RemoveButton(
+              size: 22,
+              onPressed: () async {
+                deletedAProduct =
+                    true; //bool para evitar que haga animación de entrada del ultimo producto después de eliminar
+                controller.reverse(); //hacemos animacion de dismiss
+                await Future.delayed(const Duration(seconds: 1));
 
-                  ProductsCubit productsCubit =
-                      BlocProvider.of<ProductsCubit>(context);
-                  productsCubit.removeProductFromCart(index);
-                  Utils.showSnackBar(
-                      context: context, msg: "Removed from cart");
-                  await Future.delayed(const Duration(milliseconds: 200));
-                  deletedAProduct = false;
-                }))
-      ]),
-    );
+                ProductsCubit productsCubit =
+                    BlocProvider.of<ProductsCubit>(context);
+                productsCubit.removeProductFromCart(index);
+                Utils.showSnackBar(context: context, msg: "Removed from cart");
+                await Future.delayed(const Duration(milliseconds: 200));
+                deletedAProduct = false;
+              }))
+    ]);
 
     //si es el ultimo producto, se le hace la animación de entrada
     if (index == listProducts.length - 1) {

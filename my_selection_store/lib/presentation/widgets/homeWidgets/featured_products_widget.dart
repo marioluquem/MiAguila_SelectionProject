@@ -1,11 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/helpers/routes.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/circular_container_widget.dart';
+import '../../../business_logic/cubit/products_cubit.dart';
+import '../../../data/models/product_model.dart';
+import '../../../helpers/constants.dart';
+import '../../../helpers/enums.dart';
+import '../../../helpers/routes.dart';
+import '../generalWidgets/circular_container_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class FeaturedProductsHome extends StatefulWidget {
@@ -19,10 +20,11 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
   final CarouselController carouselController = CarouselController();
   int indexCarouselFeatured = 0;
   List<ProductModel> listFeaturedProducts = [];
+  late ProductsCubit productsCubit;
 
   @override
   void initState() {
-    //TODO.leer desde aqui el API para definir los destacados y setearlos en  List<ProductModel> listFeaturedProducts
+    productsCubit = BlocProvider.of<ProductsCubit>(context);
     super.initState();
   }
 
@@ -76,7 +78,7 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
           SizedBox(
             width: MediaQuery.of(context).size.width,
             child: state.listProductsHandlersStates
-                    .contains(ProductsHandlerState.loadingFeatured)
+                    .contains(EnumProductsLoadingState.loadingFeatured)
                 ? const Center(child: CircularProgressIndicator.adaptive())
                 : CarouselSlider(
                     options: CarouselOptions(
@@ -131,8 +133,9 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
       final product = listFeaturedProductsModels[index];
       return GestureDetector(
         onTap: () {
+          productsCubit.setDetailProduct(product);
           Navigator.pushNamed(context, MyRoutes.detailPath,
-              arguments: [product, "${index}Featured"]);
+              arguments: ["${index}Featured"]);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

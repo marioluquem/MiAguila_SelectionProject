@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/helpers/utils.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/add_to_cart_button.dart';
-import 'package:my_selection_store/presentation/widgets/homeWidgets/quick_view_cart_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
+import '../../data/models/product_model.dart';
+import '../../helpers/constants.dart';
+import '../../helpers/utils.dart';
+import '../widgets/generalWidgets/add_to_cart_button.dart';
+import '../widgets/homeWidgets/quick_view_cart_widget.dart';
 
-class DetailScreen extends StatelessWidget {
-  final ProductModel product;
+class DetailScreen extends StatefulWidget {
   final String idHero;
-  const DetailScreen({Key? key, required this.product, required this.idHero})
-      : super(key: key);
+  const DetailScreen({Key? key, required this.idHero}) : super(key: key);
+
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  late ProductModel product;
+  late ProductsCubit productsCubit;
+
+  @override
+  void initState() {
+    productsCubit = BlocProvider.of<ProductsCubit>(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isPortrait = Utils.isOrientationPortrait(context);
+    product = productsCubit.state.selectedDetailProduct;
+    print(product.toJson);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -71,7 +88,7 @@ class DetailScreen extends StatelessWidget {
       color: Constants.secondaryColor,
       width: double.infinity,
       child: Hero(
-          tag: "image${product.id}-$idHero",
+          tag: "image${product.id}-${widget.idHero}",
           child: Image.network(
             product.image,
             height:
