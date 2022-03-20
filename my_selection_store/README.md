@@ -1,16 +1,11 @@
 # my_selection_store
 
-A new Flutter project.
+Un proyecto para el proceso de selección de la empresa Mi Águila
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+- Contiene 1 Cubit Bloc que se encarga de manejar los estados de 3 listas de productos: destacados (featured), productos generales (scroll) y los productos en el carrito (cart). Además maneja estados de "cargando" (EnumProductsLoadingState) para cuando se esta obteniendo información poder mostrar iconos de loading.
 
-A few resources to get you started if this is your first Flutter project:
+- Se utilizó un paquete llamado Hydrated_Bloc (desarrollado sobre Hive), para almacenar los datos en el storage local.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 

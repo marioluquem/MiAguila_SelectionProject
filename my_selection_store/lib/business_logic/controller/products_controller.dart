@@ -1,5 +1,5 @@
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/data/repositories/products_repository.dart';
+import '../../data/models/product_model.dart';
+import '../../data/repositories/products_repository.dart';
 
 class ProductsController {
   ProductsController();
@@ -8,16 +8,24 @@ class ProductsController {
     int fromIndex = 1,
     int quantity = 10,
   }) async {
-    ProductsRepository productsListRepository = ProductsRepository();
-    return await productsListRepository.getProductsListFromAPI(
-        fromIndex, quantity);
+    try {
+      ProductsRepository productsListRepository = ProductsRepository();
+      return await productsListRepository.getProductsListFromAPI(
+          fromIndex, quantity);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   getFeaturedProducts({
     int quantity = 10,
   }) async {
-    ProductsRepository featuredProductsListRepository = ProductsRepository();
-    return await featuredProductsListRepository
-        .getFeaturedProductsListFromAPI(quantity);
+    try {
+      ProductsRepository featuredProductsListRepository = ProductsRepository();
+      return await featuredProductsListRepository
+          .getFeaturedProductsListFromAPI(quantity);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

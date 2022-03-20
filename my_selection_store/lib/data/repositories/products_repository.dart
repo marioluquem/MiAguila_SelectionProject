@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
+import '../models/product_model.dart';
 
 class ProductsRepository {
   Dio dio = Dio();
@@ -17,7 +17,7 @@ class ProductsRepository {
 
       listProducts = List.generate(rawData.data.length,
           (index) => ProductModel.fromJson(rawData.data[index]));
-    } on DioError catch (e) {
+    } catch (e) {
       print(e);
       throw Exception('Error reading products data');
     }
@@ -34,10 +34,7 @@ class ProductsRepository {
 
       listProducts = List.generate(rawData.data.length,
           (index) => ProductModel.fromJson(rawData.data[index]));
-
-      print(List.generate(
-          listProducts.length, (index) => listProducts[index].id));
-    } on DioError catch (e) {
+    } catch (e) {
       print(e);
       throw Exception('Error reading products data');
     }

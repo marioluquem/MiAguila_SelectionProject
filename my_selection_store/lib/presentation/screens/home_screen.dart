@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/helpers/routes.dart';
-import 'package:my_selection_store/helpers/utils.dart';
-import 'package:my_selection_store/presentation/widgets/homeWidgets/quick_view_cart_widget.dart';
+import '../../business_logic/cubit/products_cubit.dart';
+import '../../helpers/constants.dart';
+import '../../helpers/routes.dart';
+import '../../helpers/utils.dart';
+import '../widgets/homeWidgets/quick_view_cart_widget.dart';
 
 import '../widgets/homeWidgets/featured_products_widget.dart';
 import '../widgets/homeWidgets/scroll_products_widget.dart';
@@ -17,8 +17,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late ProductsCubit productsCubit;
+
   @override
   void initState() {
+    productsCubit = BlocProvider.of<ProductsCubit>(context);
+    //leemos los datos del API
+    try {
+      print("Leyendo los datos desde el home");
+      //traemos los primeros 10 productos al inicializar el estado
+      productsCubit.getProductsList(1, 10);
+      //traemos los productos destacados
+      productsCubit.getFeaturedProducts();
+    } catch (e) {
+      Utils.showSnackBar(
+          context: context, msg: 'Couln\'t read the products data');
+    }
+
     super.initState();
   }
 
@@ -59,7 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildQuickCartView() {
-    return const Positioned(bottom: 0, child: QuickCartView());
+    return const Positioned(
+        bottom: 0,
+        child: QuickCartView(
+          useMaxWidth: false,
+        ));
   }
 
   Positioned shoppingCartButton(BuildContext context) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/grid_products.dart';
+import '../../business_logic/cubit/products_cubit.dart';
+import '../../helpers/constants.dart';
+import '../../helpers/enums.dart';
+import '../widgets/generalWidgets/grid_products.dart';
 
 class ShoppingCartScreen extends StatefulWidget {
   const ShoppingCartScreen({Key? key}) : super(key: key);
@@ -45,13 +46,14 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
                         )
                       : GridProducts(
                           isLoading: state.listProductsHandlersStates
-                              .contains(ProductsHandlerState.loadingCart),
+                              .contains(EnumProductsLoadingState.loadingCart),
                           listProducts: state.listCartProducts,
                           showAddToCart: false,
                           showDeleteFromCart: true,
                           heroIdentifier: Constants.heroCartIdentifier,
                           animate:
-                              false, //porque estamos haciendo ya la animacion del hero
+                              false, //No hace animacion de EaseIn, porque estamos haciendo ya la animacion del hero
+                          isInShoppingCart: true,
                         );
                 },
               ),

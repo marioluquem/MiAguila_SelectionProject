@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/helpers/constants.dart';
-import 'package:my_selection_store/helpers/routes.dart';
-import 'package:my_selection_store/helpers/utils.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/circular_container_widget.dart';
-import 'package:my_selection_store/presentation/widgets/generalWidgets/grid_products.dart';
+import '../../../business_logic/cubit/products_cubit.dart';
+import '../../../data/models/product_model.dart';
+import '../../../helpers/constants.dart';
+import '../../../helpers/enums.dart';
+import '../../../helpers/routes.dart';
+import '../../../helpers/utils.dart';
+import '../generalWidgets/circular_container_widget.dart';
+import '../generalWidgets/grid_products.dart';
 
 class ScrollProductsHome extends StatefulWidget {
   ScrollProductsHome({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _ScrollProductsHomeState extends State<ScrollProductsHome> {
           builder: (context, state) {
             return GridProducts(
               isLoading: state.listProductsHandlersStates
-                  .contains(ProductsHandlerState.loadingScroll),
+                  .contains(EnumProductsLoadingState.loadingScroll),
               listProducts: state.listProducts,
               showAddToCart: true,
               showDeleteFromCart: false,

@@ -1,12 +1,16 @@
-import 'package:bloc/bloc.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:my_selection_store/helpers/utils.dart';
 
-import 'package:my_selection_store/business_logic/controller/products_controller.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
+import '../../data/models/product_model.dart';
+import '../../helpers/enums.dart';
+import '../controller/products_controller.dart';
 
 part 'products_state.dart';
 
 //Cubit que maneja el estado la lista global de items obtenidas desde el API
-class ProductsCubit extends Cubit<ProductsState> {
+class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
   ProductsController productsController = ProductsController();
 
   ProductsCubit()
@@ -14,61 +18,82 @@ class ProductsCubit extends Cubit<ProductsState> {
             listProductsHandlersStates: [],
             listProducts: [],
             listFeaturedProducts: [],
-            listCartProducts: [])) {
-    print("en el constructor del cubit");
-    //traemos los primeros 10 productos al inicializar el estado
-    getProductsList(1, 10);
-    //traemos los productos destacados
-    getFeaturedProducts();
-  }
+            listCartProducts: [],
+            selectedDetailProduct: ProductModel.empty())) {}
 
-  //agrega un estado a la lista de handlers de estados de los productos
-  List<ProductsHandlerState> addToHandlersList(
-      ProductsHandlerState loadingState) {
-    return List<ProductsHandlerState>.from(state.listProductsHandlersStates)
+  ///****************************  UTILS  *********************************/
+
+  //Util: agrega un estado a la lista de handlers de estados de los productos
+  List<EnumProductsLoadingState> addToHandlersList(
+      EnumProductsLoadingState loadingState) {
+    return List<EnumProductsLoadingState>.from(state.listProductsHandlersStates)
       ..add(loadingState);
   }
 
-  //remueve un estado de la lista de handlers de estado de los productos
-  List<ProductsHandlerState> removeFromHandlersList(
-      ProductsHandlerState loadingState) {
-    return List<ProductsHandlerState>.from(state.listProductsHandlersStates)
-      ..removeWhere((ProductsHandlerState handler) => handler == loadingState);
+  //Util: remueve un estado de la lista de handlers de estado de los productos
+  List<EnumProductsLoadingState> removeFromHandlersList(
+      EnumProductsLoadingState loadingState) {
+    return List<EnumProductsLoadingState>.from(state.listProductsHandlersStates)
+      ..removeWhere(
+          (EnumProductsLoadingState handler) => handler == loadingState);
   }
+
+  ///****************************  Obtiene las listas de productos del API a traves del controller  *********************************/
 
   Future getProductsList(int indexFrom, int quantity) async {
     //mostramos el loading...
     emit(state.copyWith(
         listProductsHandlersStates:
-            addToHandlersList(ProductsHandlerState.loadingScroll)));
+            addToHandlersList(EnumProductsLoadingState.loadingScroll)));
 
-    //traemos los productos
-    List<ProductModel> newListProducts =
-        await productsController.getProducts(quantity: quantity);
+    if (state.listProducts.isEmpty) {
+      print("Lista de productos vacía, leemos el API");
 
-    //actualizamos solo la lista de productos
-    emit(state.copyWith(
-        listProductsHandlersStates:
-            removeFromHandlersList(ProductsHandlerState.loadingScroll),
-        listProducts: [...state.listProducts, ...newListProducts]));
+      try {
+        //traemos los productos
+        List<ProductModel> newListProducts =
+            await productsController.getProducts(quantity: quantity);
+
+        //actualizamos solo la lista de productos
+        emit(state.copyWith(
+            listProductsHandlersStates:
+                removeFromHandlersList(EnumProductsLoadingState.loadingScroll),
+            listProducts: [...state.listProducts, ...newListProducts]));
+      } on DioError catch (e) {
+        rethrow;
+      }
+    } else {
+      print("Lista de productos llena, leida desde storage");
+      //actualizamos solo la lista de productos
+      emit(state.copyWith(
+          listProductsHandlersStates:
+              removeFromHandlersList(EnumProductsLoadingState.loadingScroll),
+          listProducts: List.from(state.listProducts)));
+    }
   }
 
   Future getFeaturedProducts() async {
     //mostramos el loading de los featured...
     emit(state.copyWith(
         listProductsHandlersStates:
-            addToHandlersList(ProductsHandlerState.loadingFeatured)));
+            addToHandlersList(EnumProductsLoadingState.loadingFeatured)));
 
-    //traemos los productos destacados
-    List<ProductModel> newFeaturedProducts =
-        await productsController.getFeaturedProducts(quantity: 5);
+    try {
+      //traemos los productos destacados
+      List<ProductModel> newFeaturedProducts =
+          await productsController.getFeaturedProducts(quantity: 5);
 
-    //actualizamos solo la lista de productos destacados
-    emit(state.copyWith(
-        listProductsHandlersStates:
-            removeFromHandlersList(ProductsHandlerState.loadingFeatured),
-        listFeaturedProducts: newFeaturedProducts));
+      //actualizamos solo la lista de productos destacados
+      emit(state.copyWith(
+          listProductsHandlersStates:
+              removeFromHandlersList(EnumProductsLoadingState.loadingFeatured),
+          listFeaturedProducts: newFeaturedProducts));
+    } on DioError catch (e) {
+      rethrow;
+    }
   }
+
+  ///****************************  Agrega/Remueve un producto al/del carrito  *********************************/
 
   void addProductToCart(ProductModel product) {
     List<ProductModel> newCartList = List.from(state.listCartProducts);
@@ -80,5 +105,22 @@ class ProductsCubit extends Cubit<ProductsState> {
     List<ProductModel> newCartList = List.from(state.listCartProducts);
     newCartList.removeAt(index);
     emit(state.copyWith(listCartProducts: newCartList));
+  }
+
+  ///****************************  Selecciona un producto para el detalle  *********************************/
+
+  void setDetailProduct(ProductModel product) {
+    emit(state.copyWith(selectedDetailProduct: product));
+  }
+
+  ///****************************  MIXINS OVERRIDES para guardar los daos en local  *********************************/
+  @override
+  ProductsState? fromJson(Map<String, dynamic> json) {
+    return ProductsState.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(ProductsState state) {
+    return state.toMap();
   }
 }

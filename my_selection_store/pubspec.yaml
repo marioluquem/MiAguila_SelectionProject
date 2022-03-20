@@ -34,6 +34,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
+  hydrated_bloc: ^8.1.0
+  path_provider: ^2.0.9
   smooth_page_indicator: ^1.0.0+2
 
 dev_dependencies:
