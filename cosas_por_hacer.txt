@@ -1,5 +1,5 @@
 -   tarea: evaluar: ¿separa en 3 cubits?
-        (LISTO. Se decidió dejarlo con 1 solo Cubit)
+        (LISTO. Se decidió dejarlo con 1 solo Cubit para gestionar los productos)
 -   tarea: implementar base de datos local
         (LISTO. Se utilizó Hydrated_Bloc para almacenar en storage el estado de los cubits)
 -   tarea: funcionar offline
