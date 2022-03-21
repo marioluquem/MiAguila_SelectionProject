@@ -26,7 +26,7 @@ class ProductModel {
       description: '',
       category: '',
       image: '',
-      rating: Rating(rate: 0, count: 0));
+      rating: Rating.empty());
 
   factory ProductModel.fromRawJson(String str) =>
       ProductModel.fromJson(json.decode(str));
@@ -90,6 +90,8 @@ class Rating {
         rate: rate ?? this.rate,
         count: count ?? this.count,
       );
+
+  factory Rating.empty() => Rating(rate: 0, count: 0);
 
   factory Rating.fromRawJson(String str) => Rating.fromJson(json.decode(str));
 

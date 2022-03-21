@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
+import '../../../business_logic/cubit/internet_cubit.dart';
+import 'share_button.dart';
 import '../../../business_logic/cubit/products_cubit.dart';
 import '../../../data/models/product_model.dart';
 import '../../../helpers/constants.dart';
@@ -42,10 +43,12 @@ class _GridProductsState extends State<GridProducts>
     with TickerProviderStateMixin {
   late ProductsCubit productsCubit;
   bool deletedAProduct = false;
+  double _opacityIcons = 0;
 
   @override
   void initState() {
     productsCubit = BlocProvider.of<ProductsCubit>(context);
+
     super.initState();
   }
 
@@ -80,7 +83,7 @@ class _GridProductsState extends State<GridProducts>
 
   buildIndividualProduct(
       BuildContext context, ProductModel product, int index) {
-    final _widthCard = MediaQuery.of(context).size.width * 0.5 - 30;
+    final _widthCard = MediaQuery.of(context).size.width * 0.5;
     AnimationController controller = AnimationController(
         duration: const Duration(milliseconds: 1000),
         vsync: this,
@@ -98,15 +101,22 @@ class _GridProductsState extends State<GridProducts>
         elevation: 8,
         child: Container(
           width: _widthCard,
-          height: index % 2 == 0 ? 200 : 250,
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Stack(children: [
                 productInfo(context, product, index),
-                removeButton(controller, context, index),
-                shareButton(controller, context, index, product),
+                Positioned(
+                  top: -10,
+                  right: -5,
+                  child: removeButton(controller, context, index),
+                ),
+                Positioned(
+                  top: 80,
+                  right: -12,
+                  child: ShareButton(product: product),
+                ),
               ]),
             ],
           ),
@@ -179,9 +189,12 @@ class _GridProductsState extends State<GridProducts>
                       color: Constants.pricesColor,
                       fontWeight: FontWeight.bold),
                 ),
-                widget.showAddToCart
-                    ? AddToCartButton(product: product)
-                    : Container()
+                if (widget.showAddToCart)
+                  Transform.translate(
+                      offset: Offset(12, 0),
+                      child: AddToCartButton(product: product))
+                else
+                  Container()
               ],
             ),
           ],
@@ -192,46 +205,22 @@ class _GridProductsState extends State<GridProducts>
 
   Widget removeButton(
       AnimationController controller, BuildContext context, int index) {
-    return widget.showDeleteFromCart
-        ? Positioned(
-            top: -10,
-            right: -5,
-            child: RemoveButton(
-                size: 35,
-                onPressed: () async {
-                  deletedAProduct =
-                      true; //bool para evitar que haga animación de entrada del ultimo producto después de eliminar
-                  controller.reverse(); //hacemos animacion de dismiss
-                  await Future.delayed(const Duration(seconds: 1));
+    if (widget.showDeleteFromCart) {
+      return RemoveButton(
+          size: 35,
+          onPressed: () async {
+            deletedAProduct =
+                true; //bool para evitar que haga animación de entrada del ultimo producto después de eliminar
+            controller.reverse(); //hacemos animacion de dismiss
+            await Future.delayed(const Duration(seconds: 1));
 
-                  productsCubit.removeProductFromCart(index);
-                  Utils.showSnackBar(
-                      context: context, msg: "Removed from cart");
-                  await Future.delayed(const Duration(milliseconds: 200));
-                  deletedAProduct = false;
-                }),
-          )
-        : Container();
-  }
-
-  Widget shareButton(AnimationController controller, BuildContext context,
-      int index, ProductModel product) {
-    return Positioned(
-      top: 80,
-      right: 0,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            primary: Constants.secondaryColor,
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(10),
-            fixedSize: Size(40, 40)),
-        onPressed: () async {
-          String linkURL = await Utils.createDynamicLink(
-              context, 'Mira este producto!', product);
-          await Utils.share('Mira este producto!', '', linkURL, 'Compartir en');
-        },
-        child: Icon(Icons.share, color: Colors.white, size: 22),
-      ),
-    );
+            productsCubit.removeProductFromCart(index);
+            Utils.showSnackBar(context: context, msg: "Removed from cart");
+            await Future.delayed(const Duration(milliseconds: 200));
+            deletedAProduct = false;
+          });
+    } else {
+      return Container();
+    }
   }
 }

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_share/flutter_share.dart';
-import 'package:my_selection_store/business_logic/cubit/dynamiclinks_cubit.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
-import 'package:my_selection_store/helpers/routes.dart';
+import '../business_logic/cubit/dynamiclinks_cubit.dart';
+import '../business_logic/cubit/products_cubit.dart';
+import '../data/models/product_model.dart';
+import 'routes.dart';
 
 class Utils {
   static bool isOrientationPortrait(BuildContext context) {
@@ -72,38 +72,5 @@ class Utils {
       String title, String text, String linkUrl, String chooserTitle) async {
     await FlutterShare.share(
         title: title, text: text, linkUrl: linkUrl, chooserTitle: chooserTitle);
-  }
-
-  static checkForDynamicLinksReceived(
-      BuildContext context, ProductsCubit productsCubit) async {
-    DynamiclinksCubit dynamiclinksCubit = context.watch<DynamiclinksCubit>();
-    if (dynamiclinksCubit.state is DynamicLinkReceived) {
-      int idDynamic =
-          (dynamiclinksCubit.state as DynamicLinkReceived).productID;
-      try {
-        ProductModel productFound = productsCubit.state.listProducts
-            .firstWhere((ProductModel element) => element.id == idDynamic);
-
-        await Utils.pushDetailPageFromDynamicLink(
-            context, productsCubit, productFound);
-      } catch (e) {
-        print(e);
-        print('Didn\'t found the product with ID: $idDynamic');
-      }
-    }
-  }
-
-  static pushDetailPageFromDynamicLink(BuildContext context,
-      ProductsCubit productsCubit, ProductModel product) async {
-    context
-        .read<DynamiclinksCubit>()
-        .emitDynamicLinkWaiting(); //volvemos a la normalidad (ya no tiene un link pendiente)
-    productsCubit
-        .setDetailProduct(product); //asignamos el producto a ver en detalle
-
-    Future.delayed(Duration.zero, () {
-      Navigator.pushNamed(context, MyRoutes.detailPath,
-          arguments: ['']); //vamos al detalle
-    });
   }
 }

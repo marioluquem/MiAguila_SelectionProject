@@ -8,4 +8,9 @@
         (LISTO. Era el try/catch, se cambio por 2 try/catch)
 -   tarea: implementar dynamic link para compartir los productos
         (LISTO. Se implementó dynamic links con firebase para compartir productos)
+-   tarea: Agregar una gestión de inyección de dependencias
+        (LISTO. Se implementó el paquete Get_It para centralizar los servicios en 1 solo import)
+-   tarea: Colocar un ícono a la app
+        (LISTO. Se colocó ícono a la app con el paquete flutter_launcher_icons)
 -   tarea: aplicar tests
+        (Se comenzó a aplicar tests con el paquete bloc_test)

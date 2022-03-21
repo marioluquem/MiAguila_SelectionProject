@@ -1,9 +1,9 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/dynamiclinks_cubit.dart';
-import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
-import 'package:my_selection_store/data/models/product_model.dart';
+import '../../business_logic/cubit/dynamiclinks_cubit.dart';
+import '../../business_logic/cubit/internet_cubit.dart';
+import '../../data/models/product_model.dart';
 import '../../business_logic/cubit/products_cubit.dart';
 import '../../helpers/constants.dart';
 import '../../helpers/routes.dart';
@@ -23,11 +23,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late ProductsCubit productsCubit;
   late InternetCubit internetCubit;
+  late DynamiclinksCubit dynamiclinksCubit;
 
   @override
   void initState() {
     productsCubit = BlocProvider.of<ProductsCubit>(context);
     internetCubit = BlocProvider.of<InternetCubit>(context);
+    dynamiclinksCubit = BlocProvider.of<DynamiclinksCubit>(context);
     //leemos los datos del API
     getProductsDataFromAPI();
 
@@ -73,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     bool isPortrait = Utils.isOrientationPortrait(context);
     //reading possible dynamiclinks
-    Utils.checkForDynamicLinksReceived(context, productsCubit);
+    dynamiclinksCubit.checkForDynamicLinksReceived(context);
 
     return SafeArea(
       child: Scaffold(
@@ -129,10 +131,16 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: Container(
             decoration: BoxDecoration(
-              color: Constants.secondaryColor,
-              borderRadius:
-                  const BorderRadius.only(topLeft: Radius.circular(100)),
-            ),
+                color: Constants.secondaryColor,
+                borderRadius:
+                    const BorderRadius.only(topLeft: Radius.circular(100)),
+                boxShadow: const [
+                  BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(0, -1),
+                      blurRadius: 5,
+                      spreadRadius: 1)
+                ]),
             height: 100,
             padding: const EdgeInsets.only(left: 20, top: 20),
             width: MediaQuery.of(context).size.width * 0.22,

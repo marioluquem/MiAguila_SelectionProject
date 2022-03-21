@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:my_selection_store/helpers/utils.dart';
+import 'package:my_selection_store/locator.dart';
+import '../../helpers/utils.dart';
 
 import '../../data/models/product_model.dart';
 import '../../helpers/enums.dart';
@@ -11,7 +12,7 @@ part 'products_state.dart';
 
 //Cubit que maneja el estado la lista global de items obtenidas desde el API
 class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
-  ProductsController productsController = ProductsController();
+  //ProductsController productsController = ProductsController();
 
   ProductsCubit()
       : super(ProductsState(
@@ -19,7 +20,7 @@ class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
             listProducts: [],
             listFeaturedProducts: [],
             listCartProducts: [],
-            selectedDetailProduct: ProductModel.empty())) {}
+            selectedDetailProduct: ProductModel.empty()));
 
   ///****************************  UTILS  *********************************/
 
@@ -51,8 +52,9 @@ class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
 
       try {
         //traemos los productos
-        List<ProductModel> newListProducts =
-            await productsController.getProducts(quantity: quantity);
+        List<ProductModel> newListProducts = await locator
+            .get<ProductsController>()
+            .getProducts(quantity: quantity);
 
         //actualizamos solo la lista de productos
         emit(state.copyWith(
@@ -85,8 +87,9 @@ class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
 
     try {
       //traemos los productos destacados
-      List<ProductModel> newFeaturedProducts =
-          await productsController.getFeaturedProducts(quantity: 5);
+      List<ProductModel> newFeaturedProducts = await locator
+          .get<ProductsController>()
+          .getFeaturedProducts(quantity: 5);
 
       //actualizamos solo la lista de productos destacados
       emit(state.copyWith(

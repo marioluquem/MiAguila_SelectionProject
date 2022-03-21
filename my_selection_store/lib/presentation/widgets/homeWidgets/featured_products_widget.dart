@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
+import '../../../business_logic/cubit/internet_cubit.dart';
 import '../../../business_logic/cubit/products_cubit.dart';
 import '../../../data/models/product_model.dart';
 import '../../../helpers/constants.dart';
@@ -37,7 +37,14 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
           color: Constants.mainColor,
           borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(100),
-              bottomRight: Radius.circular(100))),
+              bottomRight: Radius.circular(100)),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, 5),
+                blurRadius: 5,
+                spreadRadius: 1)
+          ]),
       height: MediaQuery.of(context).size.height * 0.15,
       constraints: const BoxConstraints(minHeight: 150),
       child: Column(
@@ -62,7 +69,6 @@ class _FeaturedProductsHomeState extends State<FeaturedProductsHome> {
           onDotClicked: (index) {
             indexCarouselFeatured = index;
             carouselController.animateToPage(index);
-            print(index);
           },
         );
       },
