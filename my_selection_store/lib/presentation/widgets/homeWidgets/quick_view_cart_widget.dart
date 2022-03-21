@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
+import '../../../business_logic/cubit/internet_cubit.dart';
 import '../../../business_logic/cubit/products_cubit.dart';
 import '../../../data/models/product_model.dart';
 import '../../../helpers/constants.dart';
@@ -37,9 +37,13 @@ class _QuickCartViewState extends State<QuickCartView>
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(bottom: 10, top: 10, left: 15),
-      decoration: BoxDecoration(
-        color: Constants.mainColor,
-      ),
+      decoration: BoxDecoration(color: Colors.grey.shade100, boxShadow: const [
+        BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, -1),
+            blurRadius: 5,
+            spreadRadius: 1)
+      ]),
       height: MediaQuery.of(context).size.height * 0.08,
       width: MediaQuery.of(context).size.width,
       constraints: const BoxConstraints(minHeight: 50),
@@ -82,7 +86,7 @@ class _QuickCartViewState extends State<QuickCartView>
                   } else {
                     return const Text(
                       'Your cart is empty. Try adding some products!',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      style: TextStyle(color: Colors.black87, fontSize: 12),
                     );
                   }
                 }
@@ -163,7 +167,6 @@ class _QuickCartViewState extends State<QuickCartView>
 
     //si es el ultimo producto, se le hace la animación de entrada
     if (index == listProducts.length - 1) {
-      print("eNTRO A HACER LA ANIMACION");
       controller.forward();
       //se asigna la transicion
       content = ScaleTransition(

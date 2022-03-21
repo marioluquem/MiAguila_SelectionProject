@@ -3,16 +3,15 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:meta/meta.dart';
-import 'package:my_selection_store/helpers/enums.dart';
+import '../../helpers/enums.dart';
 
-part 'internetconnection_state.dart';
+part 'internet_state.dart';
 
-class InternetCubit extends Cubit<InternetconnectionState> {
+class InternetCubit extends Cubit<InternetState> {
   late Connectivity connectivity;
   late StreamSubscription connectivityStreamSubscription;
 
-  InternetCubit({required this.connectivity})
-      : super(InternetconnectionInitial()) {
+  InternetCubit({required this.connectivity}) : super(InternetInitial()) {
     trackInternetConnection();
   }
 
@@ -27,10 +26,10 @@ class InternetCubit extends Cubit<InternetconnectionState> {
         connectivity.onConnectivityChanged.listen((connection) {
       switch (connection) {
         case ConnectivityResult.wifi:
-          emitInternetConnected(InternetConnectionType.wifi);
+          emitInternetConnected(InternetType.wifi);
           break;
         case ConnectivityResult.mobile:
-          emitInternetConnected(InternetConnectionType.mobile);
+          emitInternetConnected(InternetType.mobile);
           break;
         case ConnectivityResult.none:
           emitInternetDisconnected();
@@ -41,7 +40,7 @@ class InternetCubit extends Cubit<InternetconnectionState> {
     });
   }
 
-  void emitInternetConnected(InternetConnectionType connection) {
+  void emitInternetConnected(InternetType connection) {
     emit(InternetConnected(connectionType: connection));
   }
 

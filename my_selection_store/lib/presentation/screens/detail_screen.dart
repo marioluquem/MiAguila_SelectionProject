@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
-import 'package:my_selection_store/business_logic/cubit/products_cubit.dart';
+import '../../business_logic/cubit/dynamiclinks_cubit.dart';
+import '../../business_logic/cubit/internet_cubit.dart';
+import '../../business_logic/cubit/products_cubit.dart';
 import '../../data/models/product_model.dart';
 import '../../helpers/constants.dart';
 import '../../helpers/utils.dart';
@@ -19,10 +20,12 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   late ProductsCubit productsCubit;
   late ProductModel product;
+  late DynamiclinksCubit dynamiclinksCubit;
 
   @override
   void initState() {
     productsCubit = BlocProvider.of<ProductsCubit>(context);
+    dynamiclinksCubit = BlocProvider.of<DynamiclinksCubit>(context);
     super.initState();
   }
 
@@ -30,7 +33,9 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     bool isPortrait = Utils.isOrientationPortrait(context);
     product = productsCubit.state.selectedDetailProduct;
-    print(product.toJson);
+
+    //reading possible dynamiclinks
+    dynamiclinksCubit.checkForDynamicLinksReceived(context);
 
     return Scaffold(
       body: SafeArea(
@@ -89,12 +94,19 @@ class _DetailScreenState extends State<DetailScreen> {
       bool hasConnection =
           context.watch<InternetCubit>().isConnectedToInternet();
       return Container(
-        color: Constants.secondaryColor,
         width: double.infinity,
         constraints: BoxConstraints(
           maxHeight:
               MediaQuery.of(context).size.height * (isPortrait ? 0.4 : 0.3),
         ),
+        decoration:
+            BoxDecoration(color: Constants.secondaryColor, boxShadow: const [
+          BoxShadow(
+              color: Colors.black26,
+              offset: Offset(0, 5),
+              blurRadius: 5,
+              spreadRadius: 1)
+        ]),
         child: Hero(
           tag: "image${product.id}-${widget.idHero}",
           child: hasConnection

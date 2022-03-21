@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../business_logic/cubit/dynamiclinks_cubit.dart';
 import '../../business_logic/cubit/products_cubit.dart';
 import '../../helpers/constants.dart';
 import '../../helpers/enums.dart';
@@ -14,14 +15,20 @@ class ShoppingCartScreen extends StatefulWidget {
 
 class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   late ProductsCubit productsCubit;
+  late DynamiclinksCubit dynamiclinksCubit;
+
   @override
   void initState() {
     productsCubit = BlocProvider.of<ProductsCubit>(context);
+    dynamiclinksCubit = BlocProvider.of<DynamiclinksCubit>(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    //reading possible dynamiclinks
+    dynamiclinksCubit.checkForDynamicLinksReceived(context);
+
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -71,7 +78,14 @@ class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
           color: Constants.secondaryColor,
           borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(100),
-              bottomRight: Radius.circular(100))),
+              bottomRight: Radius.circular(100)),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, 5),
+                blurRadius: 5,
+                spreadRadius: 1)
+          ]),
       height: MediaQuery.of(context).size.height * 0.1,
       width: double.infinity,
       constraints: const BoxConstraints(minHeight: 100),

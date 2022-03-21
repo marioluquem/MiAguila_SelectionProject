@@ -2,9 +2,9 @@
     package="com.marioluque.miaguilastorejobtest">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="my_selection_store"
+        android:label="MiAguilaStore JobTest"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
