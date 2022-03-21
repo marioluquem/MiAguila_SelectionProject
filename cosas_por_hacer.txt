@@ -4,5 +4,8 @@
         (LISTO. Se utilizó Hydrated_Bloc para almacenar en storage el estado de los cubits)
 -   tarea: funcionar offline
         (LISTO. Se utilizó el plugin Connectivity_Plus para detectar si esta conectado a Wifi, Mobile o desconectado. Ojo, este plugin no detecta si esta conectado a un Wifi sin internet, o si se esta usando una VPN)
--   tarea: aplicar tests
+-   fix: arreglar destacados, se queda cargando al abrir la app sin conexión
+        (LISTO. Era el try/catch, se cambio por 2 try/catch)
 -   tarea: implementar dynamic link para compartir los productos
+        (LISTO. Se implementó dynamic links con firebase para compartir productos)
+-   tarea: aplicar tests

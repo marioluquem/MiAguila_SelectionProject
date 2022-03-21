@@ -10,6 +10,8 @@ import 'add_to_cart_button.dart';
 import 'circular_container_widget.dart';
 import 'remove_button.dart';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+
 class GridProducts extends StatefulWidget {
   final bool isLoading;
   List<ProductModel> listProducts;
@@ -52,7 +54,7 @@ class _GridProductsState extends State<GridProducts>
     return GridView(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 250,
-        childAspectRatio: 0.72,
+        childAspectRatio: 0.65,
       ),
       children: widget.isLoading
           ? buildLoadingList()
@@ -97,13 +99,14 @@ class _GridProductsState extends State<GridProducts>
         child: Container(
           width: _widthCard,
           height: index % 2 == 0 ? 200 : 250,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Stack(children: [
                 productInfo(context, product, index),
                 removeButton(controller, context, index),
+                shareButton(controller, context, index, product),
               ]),
             ],
           ),
@@ -137,7 +140,7 @@ class _GridProductsState extends State<GridProducts>
               Navigator.pushNamed(context, MyRoutes.detailPath,
                   arguments: ["$index-${widget.heroIdentifier}"]);
             },
-            child: (!widget.isInShoppingCart || index <= 5)
+            child: (!widget.isInShoppingCart || index < 5)
                 ? Hero(
                     tag: "image${product.id}-$index-${widget.heroIdentifier}",
                     child: contentHero)
@@ -146,8 +149,10 @@ class _GridProductsState extends State<GridProducts>
           width: 12,
         ),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 12,
+            ),
             GestureDetector(
               onTap: () {
                 productsCubit.setDetailProduct(product);
@@ -166,6 +171,7 @@ class _GridProductsState extends State<GridProducts>
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "\$${product.price.toString()}",
@@ -173,12 +179,9 @@ class _GridProductsState extends State<GridProducts>
                       color: Constants.pricesColor,
                       fontWeight: FontWeight.bold),
                 ),
-                Transform.translate(
-                  offset: const Offset(25, 0),
-                  child: widget.showAddToCart
-                      ? AddToCartButton(product: product)
-                      : Container(),
-                )
+                widget.showAddToCart
+                    ? AddToCartButton(product: product)
+                    : Container()
               ],
             ),
           ],
@@ -209,5 +212,26 @@ class _GridProductsState extends State<GridProducts>
                 }),
           )
         : Container();
+  }
+
+  Widget shareButton(AnimationController controller, BuildContext context,
+      int index, ProductModel product) {
+    return Positioned(
+      top: 80,
+      right: 0,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            primary: Constants.secondaryColor,
+            shape: const CircleBorder(),
+            padding: const EdgeInsets.all(10),
+            fixedSize: Size(40, 40)),
+        onPressed: () async {
+          String linkURL = await Utils.createDynamicLink(
+              context, 'Mira este producto!', product);
+          await Utils.share('Mira este producto!', '', linkURL, 'Compartir en');
+        },
+        child: Icon(Icons.share, color: Colors.white, size: 22),
+      ),
+    );
   }
 }

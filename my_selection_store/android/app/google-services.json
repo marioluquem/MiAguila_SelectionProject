@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "95496385863",
+    "project_id": "miaguila-store-jobtest",
+    "storage_bucket": "miaguila-store-jobtest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95496385863:android:94459e112bcf7164ab4862",
+        "android_client_info": {
+          "package_name": "com.marioluque.miaguilastorejobtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "95496385863-qf197vof9sggso6gom04pc3v34j5httu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5npAEe6UPTEslN3zVzBsUvND_smxCZUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95496385863-qf197vof9sggso6gom04pc3v34j5httu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

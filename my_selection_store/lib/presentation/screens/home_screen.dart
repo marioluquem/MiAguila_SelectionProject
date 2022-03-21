@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_selection_store/business_logic/cubit/dynamiclinks_cubit.dart';
 import 'package:my_selection_store/business_logic/cubit/internet_cubit.dart';
+import 'package:my_selection_store/data/models/product_model.dart';
 import '../../business_logic/cubit/products_cubit.dart';
 import '../../helpers/constants.dart';
 import '../../helpers/routes.dart';
@@ -26,35 +28,52 @@ class _HomeScreenState extends State<HomeScreen> {
     productsCubit = BlocProvider.of<ProductsCubit>(context);
     internetCubit = BlocProvider.of<InternetCubit>(context);
     //leemos los datos del API
-    try {
-      print("Leyendo los datos desde el home");
-      //traemos los primeros 10 productos al inicializar el estado
-      productsCubit.getProductsList(1, 10);
-      //traemos los productos destacados
-      productsCubit.getFeaturedProducts();
-    } catch (e) {
-      Utils.showSnackBar(
-          context: context, msg: 'Couln\'t read the products data');
-    }
+    getProductsDataFromAPI();
 
     super.initState();
+  }
+
+  Future getProductsDataFromAPI() async {
+    try {
+      //traemos los primeros 10 productos al inicializar el estado
+      await productsCubit.getProductsList(1, 10);
+    } catch (e) {
+      print(e);
+      Utils.showSnackBar(
+          context: context,
+          msg: 'Couln\'t read scroll products data from internet');
+    }
+    try {
+      //traemos los productos destacados
+      await productsCubit.getFeaturedProducts();
+    } catch (e) {
+      print(e);
+      Utils.showSnackBar(
+          context: context,
+          msg: 'Couln\'t read featured products data from internet');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     bool isPortrait = Utils.isOrientationPortrait(context);
+    //reading possible dynamiclinks
+    Utils.checkForDynamicLinksReceived(context, productsCubit);
 
     return SafeArea(
       child: Scaffold(
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              buildScrollProducts(isPortrait, context),
-              buildFeaturedProducts(isPortrait),
-              buildQuickCartView(),
-              shoppingCartButton(context)
-            ],
+        body: RefreshIndicator(
+          onRefresh: () async => await getProductsDataFromAPI(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: [
+                buildScrollProducts(isPortrait, context),
+                buildFeaturedProducts(isPortrait),
+                buildQuickCartView(),
+                shoppingCartButton(context)
+              ],
+            ),
           ),
         ),
       ),

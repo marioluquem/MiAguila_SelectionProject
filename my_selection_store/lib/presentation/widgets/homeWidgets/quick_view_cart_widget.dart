@@ -51,9 +51,6 @@ class _QuickCartViewState extends State<QuickCartView>
             child: BlocConsumer<ProductsCubit, ProductsState>(
               listener: (context, state) {},
               builder: (context, state) {
-                //para actualizar el scroll de los productos del carrito a la ultima posición al agregar
-                Utils.scrollToMaxLength(scrollController);
-
                 //Si está cargando los productos, mostramos varios loading simulando los productos
                 if (state.listProductsHandlersStates
                     .contains(EnumProductsLoadingState.loadingCart)) {
@@ -68,6 +65,9 @@ class _QuickCartViewState extends State<QuickCartView>
                 } else {
                   //Si tiene productos en carrito, los muestra, sino muestra un texto
                   if (state.listCartProducts.isNotEmpty) {
+                    //para actualizar el scroll de los productos del carrito a la ultima posición al agregar
+                    Utils.scrollToMaxLength(scrollController);
+
                     return ListView(
                       controller: scrollController,
                       scrollDirection: Axis.horizontal,

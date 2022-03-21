@@ -9,7 +9,7 @@ class AddToCartButton extends StatelessWidget {
   final ProductModel product;
   final Size size;
   const AddToCartButton(
-      {Key? key, required this.product, this.size = const Size(50, 50)})
+      {Key? key, required this.product, this.size = const Size(40, 40)})
       : super(key: key);
 
   @override
