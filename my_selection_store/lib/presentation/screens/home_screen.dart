@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_selection_store/business_logic/cubit/dynamiclinks_cubit.dart';
@@ -30,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
     //leemos los datos del API
     getProductsDataFromAPI();
 
+    checkForDynamicLinks();
+
     super.initState();
   }
 
@@ -51,6 +54,18 @@ class _HomeScreenState extends State<HomeScreen> {
       Utils.showSnackBar(
           context: context,
           msg: 'Couln\'t read featured products data from internet');
+    }
+  }
+
+  checkForDynamicLinks() async {
+    // Get any initial links
+    final PendingDynamicLinkData? initialLink =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+
+    final productID = initialLink?.link.queryParameters["productID"];
+    if (productID != null) {
+      BlocProvider.of<DynamiclinksCubit>(context)
+          .emitNewDynamicLinkReceived(int.parse(productID));
     }
   }
 
