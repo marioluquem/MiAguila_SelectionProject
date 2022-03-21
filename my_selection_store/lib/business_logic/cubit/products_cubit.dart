@@ -59,7 +59,8 @@ class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
             listProductsHandlersStates:
                 removeFromHandlersList(EnumProductsLoadingState.loadingScroll),
             listProducts: [...state.listProducts, ...newListProducts]));
-      } on DioError catch (e) {
+      } catch (e) {
+        print(e);
         emit(state.copyWith(
           listProductsHandlersStates:
               removeFromHandlersList(EnumProductsLoadingState.loadingScroll),
@@ -92,7 +93,8 @@ class ProductsCubit extends Cubit<ProductsState> with HydratedMixin {
           listProductsHandlersStates:
               removeFromHandlersList(EnumProductsLoadingState.loadingFeatured),
           listFeaturedProducts: newFeaturedProducts));
-    } on DioError catch (e) {
+    } catch (e) {
+      print(e);
       emit(state.copyWith(
         listProductsHandlersStates:
             removeFromHandlersList(EnumProductsLoadingState.loadingFeatured),

@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.my_selection_store">
+    package="com.marioluque.miaguilastorejobtest">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="my_selection_store"
         android:name="${applicationName}"

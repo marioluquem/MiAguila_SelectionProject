@@ -1,4 +1,4 @@
-package com.example.my_selection_store
+package com.marioluque.miaguilastorejobtest
 
 import io.flutter.embedding.android.FlutterActivity
 
