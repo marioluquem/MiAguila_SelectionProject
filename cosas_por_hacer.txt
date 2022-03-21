@@ -1,0 +1,16 @@
+-   tarea: evaluar: ¿separa en 3 cubits?
+        (LISTO. Se decidió dejarlo con 1 solo Cubit)
+-   tarea: implementar base de datos local
+        (LISTO. Se utilizó Hydrated_Bloc para almacenar en storage el estado de los cubits)
+-   tarea: funcionar offline
+        (LISTO. Se utilizó el plugin Connectivity_Plus para detectar si esta conectado a Wifi, Mobile o desconectado. Ojo, este plugin no detecta si esta conectado a un Wifi sin internet, o si se esta usando una VPN)
+-   fix: arreglar destacados, se queda cargando al abrir la app sin conexión
+        (LISTO. Era el try/catch, se cambio por 2 try/catch)
+-   tarea: implementar dynamic link para compartir los productos
+        (LISTO. Se implementó dynamic links con firebase para compartir productos)
+-   tarea: Agregar una gestión de inyección de dependencias
+        (LISTO. Se implementó el paquete Get_It para centralizar los servicios en 1 solo import)
+-   tarea: Colocar un ícono a la app
+        (LISTO. Se colocó ícono a la app con el paquete flutter_launcher_icons)
+-   tarea: aplicar tests
+        (Se comenzó a aplicar tests con el paquete bloc_test)
