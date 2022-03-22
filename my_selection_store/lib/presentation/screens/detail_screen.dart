@@ -99,6 +99,7 @@ class _DetailScreenState extends State<DetailScreen> {
           maxHeight:
               MediaQuery.of(context).size.height * (isPortrait ? 0.4 : 0.3),
         ),
+        padding: const EdgeInsets.symmetric(horizontal: 50),
         decoration:
             BoxDecoration(color: Constants.secondaryColor, boxShadow: const [
           BoxShadow(
@@ -124,8 +125,8 @@ class _DetailScreenState extends State<DetailScreen> {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon:
-              const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30)),
+          icon: const Icon(Icons.arrow_back_ios,
+              color: Colors.black87, size: 30)),
     );
   }
 
